@@ -1,0 +1,15 @@
+- Home
+    <>
+
+    - Projects
+
+    - Meetings
+        - Description
+        - Coming up
+        - Archive
+
+    - Contacts
+        - Twitter
+        - Github
+
+    - Sponsors [?]
