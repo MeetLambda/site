@@ -7,6 +7,9 @@ module.exports = {
 	pathPrefix: `/`,
 	plugins: [
 		{
+			resolve: `gatsby-transformer-remark`,
+		},
+		{
 			resolve: `gatsby-plugin-react-helmet`,
 		},
 		{
@@ -25,8 +28,8 @@ module.exports = {
 		{
 			resolve: `gatsby-source-filesystem`,
 			options: {
-				name: `data`,
-				path: `${__dirname}/src/content/`,
+				name: `markdown-pages`,
+				path: `${__dirname}/content/`,
 				ignore: [`**/\.*`], // ignore files starting with a dot
 			},
 		},

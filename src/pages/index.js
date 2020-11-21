@@ -1,69 +1,50 @@
 import React from "react"
-import Helmet from "react-helmet"
+import { useStaticQuery, graphql } from "gatsby"
+import Body from "../components/body"
 
-import "../scss/main.scss"
+export function containingFolder (path) {
+    let pathItems = path.split("/");
+    let beforeLastPathItem = pathItems[pathItems.length - 2];
 
-const IndexPage = () => (
-    <>
-		<Helmet
-			htmlAttributes={{
-				lang: "en",
-			}}
-			title="Meetlambda"
-			// meta={[
-			// 	{ name:		`description`,			content: "metaDescription" },
-			// 	{ property:	`og:title`,				content: "title" },
-			// 	{ property:	`og:description`,		content: "metaDescription" },
-			// 	{ property:	`og:type`,				content: `website` },
-			// 	{ name:		`twitter:card`,			content: `summary` },
-			// 	{ name:		`twitter:creator`,		content: "site.siteMetadata.author" },
-			// 	{ name:		`twitter:title`,		content: "title" },
-			// 	{ name:		`twitter:description`,	content: "metaDescription" },
-			// ]}
-		/>
-        <header>
-            <nav>
-                <ol>
-                    <li><h1>home</h1></li>
-                    <li><h1>Projects</h1></li>
-                    <li><h1>Meetings</h1></li>
-                    <li><h1>Contacts</h1></li>
-                    <li><h1>Sponsors</h1></li>
-                </ol>
-            </nav>
-        </header>
-        <main>
-            <section id="home">
+    return beforeLastPathItem;
+}
+const IndexPage = () => {
+    
+    const homeContent = useStaticQuery(graphql`
+        {
+            allMarkdownRemark {
+                nodes {
+                    html
+                    fileAbsolutePath
+                    frontmatter {
+                        layout
+                        order
+                        title
+                    }
+                }
+            }
+        }
+    `)['allMarkdownRemark']['nodes']
+        .filter(a => containingFolder(a['fileAbsolutePath']) === "home")
+        .sort((a, b) => (a['frontmatter']['order'] - b['frontmatter']['order']))
+    ;
 
-            </section>
-            <section id="projects">
-
-            </section>
-            <section id="meetings">
-
-                <section id="meetingArchive" class="archive">
-                    <ul>
-                        <li class="meetingEvent">
-                            <time datetime="2016-08-09 08:00">Tuesday at 8:00 AM</time>
-                            <article class="meetingDescription">
-
-                            </article>
-                        </li>
-                    </ul>
+    return (
+        <Body>
+            <header>
+                <nav>
+                    <ol>{ homeContent.map((i, k) => 
+                        <li key={ k }><h1>{ i['frontmatter']['title'] }</h1></li>
+                    )}</ol>
+                </nav>
+            </header>
+            <main>{ homeContent.map((i, k) => 
+                <section key={k} id={ i['frontmatter']['title'] }>
+                    <article dangerouslySetInnerHTML={ {__html: i['html']} } />
                 </section>
-            </section>
-            <section id="contacts">
-
-            </section>
-            <section id="sponsors">
-
-            </section>
-        </main>
-    </>
-)
+            )}</main>
+        </Body>
+    )
+}
 
 export default IndexPage
-
-
-
-
